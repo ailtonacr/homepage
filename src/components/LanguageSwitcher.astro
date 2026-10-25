@@ -1,8 +1,7 @@
 ---
-import { equivalentPath, otherLocale, t, type Locale } from "../i18n";
+import { equivalentPath, t, type Locale } from "../i18n";
 interface Props { lang: Locale; }
 const { lang } = Astro.props;
-const destination = otherLocale(lang);
 ---
 <nav class="language-switcher" aria-label={t(lang, "languages")}>
   <span class="sr-only">{t(lang, "selectLanguage")}</span>

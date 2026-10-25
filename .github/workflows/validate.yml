@@ -22,6 +22,8 @@ jobs:
         run: npm ci
       - name: Build the actual Astro source
         run: npm run build
+      - name: Typecheck bilingual dictionaries
+        run: npx tsc --noEmit
       - name: Validate localized build and browser language detection
         run: npm run check:i18n
       - name: Validate Cloudflare deployment bundle (no deploy)

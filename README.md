@@ -1,48 +1,48 @@
-# Ailton.dev.br — Portfólio editorial
+# Ailton.dev.br — Portfolio / Portfólio
 
-Portfólio pessoal de Ailton Rodrigues, implementado em Astro e TypeScript a partir do design do Figma:
+Editorial portfolio of Ailton Rodrigues, built from the Figma design:
 https://www.figma.com/design/kfbZl1LOxYt9vIxsvlqT7H
 
-## Arquitetura
+## Architecture
 
-- Astro 5 com renderização estática (SSG), sem React e sem servidor de renderização.
-- CSS autoral responsivo, inspirado no design original: azul, verde-petróleo, DM Sans, Instrument Serif e IBM Plex Mono.
-- Astro Content Collections + MDX para projetos e estudos de caso, com schema tipado.
-- Cloudflare Workers Static Assets, com publicação pelo Wrangler.
-- Google Analytics 4 opcional, carregado exclusivamente após consentimento explícito.
+- Astro 5 + TypeScript and static pre-rendering (SSG).
+- Cloudflare Workers Static Assets; deployment through Wrangler.
+- Custom responsive CSS, Astro Content Collections and bilingual Markdown/MDX.
+- Google Analytics 4 optionally enabled after visitor consent.
 
-## Desenvolvimento
+## Development
 
-Requer Node.js 22 ou superior.
+Node.js 22 or later. Install with npm ci, run locally with npm run dev, and create a production build with npm run build.
+Run npm run check:i18n after the build to verify real generated multilingual routes, metadata, and browser-language logic.
+Validate Cloudflare packaging with npx wrangler deploy --dry-run. Publish with npm run build && npm run deploy.
 
-- Instalar dependências: npm ci
-- Desenvolvimento local: npm run dev
-- Build de produção: npm run build
-- Preview do Worker: npm run preview
-- Validar empacotamento sem publicar: npx wrangler deploy --dry-run
-- Publicar: npm run build && npm run deploy
+## English and Portuguese
 
-## Google Analytics 4
+- Default: Portuguese (Brazil), accessible at /, /projetos/, /projetos/pastemax/, /sobre/, /contato/, /privacidade/.
+- English: /en/, /en/projects/, /en/projects/pastemax/, /en/about/, /en/contact/, /en/privacy/.
+- Initial navigation: script reads navigator.languages / navigator.language. PT or EN is selected based on browser priority; unmatched languages default to Portuguese.
+- Manual language selection in the header saves PT/EN to localStorage, with a first-party cookie fallback. Manual choice always wins over browser detection and persists across visits.
+- The switcher keeps equivalent routes and project slugs. Query parameters and fragments survive the first automatic redirect.
+- All SEO tags include appropriate document language, canonical URL, localized title/description, and hreflang alternates for PT-BR, EN and x-default.
+- Static rendering means this initial redirect is client-side. With JavaScript disabled, the language of the requested canonical route is served. No geolocation is used.
+- Translatable interface text lives in src/i18n/index.ts. Add new keys in both language dictionaries. The English dictionary is checked for key parity by TypeScript.
+- Case study text lives in src/content/projects/*.mdx (Portuguese) and src/content/projects/en/*.mdx (English), with matching filenames and explicit English locale metadata.
+- Project titles, code snippets and brand names may remain unchanged; all descriptive copy, headings, summaries, highlights, and narrative body are localized.
 
-Defina PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX no ambiente de build. Se a variável estiver vazia, nenhuma tag do Analytics será carregada e o banner não será exibido.
+## Analytics
 
-O consentimento usa o modelo Basic: antes do aceite, nenhum script Google Analytics é carregado. A preferência é guardada no navegador e pode ser revisada pelo rodapé. A aceitação ativa o page_view; os eventos de clique em projetos e canais externos são enviados somente com a permissão ativa. Nenhum dado pessoal de formulário é enviado ao GA4.
+Set PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX in the Cloudflare build environment. Without it, GA4 and the consent banner are not loaded.
+With a measurement ID, Analytics is loaded only after explicit visitor consent. The choice is saved locally and can be revisited using the footer option.
+Consent text is localized and the same choice applies across both language routes. Rebuild after changing the public build-time variable.
 
-Como é um site estático, variáveis PUBLIC_* são embutidas no build. Alterou o ID? Refaça build e deploy.
+## Tests and content integrity
 
-## Projetos e conteúdo
+The GitHub workflow installs exact dependencies, builds the real Astro source, validates generated localized pages and executes the actual browser redirect script with simulated browser languages and stored preferences. It then verifies the Cloudflare deployment package without publishing.
+The i18n validator checks each case study has a paired English and Portuguese version.
 
-Adicione arquivos MDX em src/content/projects/ respeitando o schema de src/content.config.ts. A página inicial exibe até quatro projetos marcados como featured. O catálogo e as rotas de estudos de caso são gerados automaticamente.
+## Current scope
 
-Os repositórios de vários projetos são privados. Evite links de código não públicos. Campos opcionais website e repository só geram botões quando forem explicitamente definidos.
-
-## Limitações atuais
-
-- Contato via links funcionais para GitHub e LinkedIn. Não foi criado um backend fictício de formulário.
-- Miniaturas são ilustrações HTML/CSS, não capturas de telas de produção.
-- As fontes são carregadas do Google Fonts. Como refinamento de privacidade/desempenho, pode-se migrar para fontes hospedadas localmente.
-- Antes de publicar em produção, revise dados, privacidade, links e histórico profissional.
-
-## Figma
-
-https://www.figma.com/design/kfbZl1LOxYt9vIxsvlqT7H
+- Contact is via working GitHub and LinkedIn links; no pretend form or unconfigured server.
+- Preview visuals are HTML/CSS illustrations, not screenshots of deployed products.
+- Fonts use Google Fonts. Self-hosting can be added later for additional privacy.
+- Verify that any added external project URLs are public before exposing them.

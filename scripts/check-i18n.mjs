@@ -18,8 +18,8 @@ function built(path) {
   assert.ok(existsSync(target), "Missing generated page: " + path);
   return readFileSync(target, "utf8");
 }
-const ptPaths = ["","projetos","sobre","contato","privacidade",...cases.map(slug=>"projetos/"+slug)];
-const enPaths = ["","projects","about","contact","privacy",...cases.map(slug=>"projects/"+slug)];
+const ptPaths = ["","projetos","sobre","contato","privacidade","404",...cases.map(slug=>"projetos/"+slug)];
+const enPaths = ["","projects","about","contact","privacy","404",...cases.map(slug=>"projects/"+slug)];
 for (const [locale,paths] of [["pt",ptPaths],["en",enPaths]]) {
   for(const path of paths) {
     const html = built(locale === "en" ? join("en",path) : path);
@@ -60,4 +60,5 @@ assert.equal(typeof selected.click,"function");
 selected.click({target:{closest:()=>({dataset:{languageChoice:"pt"}})}});
 assert.equal(selected.storage.get("ailton:site-language:v1"),"pt");
 assert.match(selected.document.cookie,/site_lang=pt/);
-console.log("Passed: 22 localized routes, 6 bilingual case studies, navigator detection, manual override, and deep-link routing.");
+assert.ok(built("en").includes("og-en.svg"),"English OG image missing");
+console.log("Passed: 24 localized routes, 6 bilingual case studies, navigator detection, manual override, and deep-link routing.");

@@ -31,8 +31,8 @@ const { variant, lang, compact = false } = Astro.props;
     )}
     {variant === "crypbot" && (
       <>
-        <strong>CRYPBOT / AUTOMATION</strong>
-        <code>&gt; uptime: running<br />&gt; data: processing<br />&gt; bots: monitored<br />&gt; status: healthy</code>
+        <strong>{t(lang, "visualAutomation")}</strong>
+        <code>&gt; uptime: {t(lang, "visualUptime")}<br />&gt; data: {t(lang, "visualProcessing")}<br />&gt; bots: {t(lang, "visualMonitored")}<br />&gt; status: {t(lang, "visualHealthy")}</code>
       </>
     )}
     {variant === "tavalendo" && (

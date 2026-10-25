@@ -17,7 +17,7 @@ const base = Astro.site ?? new URL("https://ailton.dev.br");
 const canonical = new URL(Astro.url.pathname, base);
 const portuguese = new URL(equivalentPath(Astro.url.pathname, "pt"), base);
 const english = new URL(equivalentPath(Astro.url.pathname, "en"), base);
-const image = new URL("/og.svg", base);
+const image = new URL(lang === "en" ? "/og-en.svg" : "/og.svg", base);
 ---
 <!doctype html>
 <html lang={lang === "pt" ? "pt-BR" : "en"}>
