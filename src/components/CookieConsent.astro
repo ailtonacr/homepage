@@ -56,7 +56,22 @@ const measurementId = /^G-[A-Z0-9]+$/.test(configuredId) ? configuredId : "";
       choice = next;
       try { localStorage.setItem(key, next); } catch {}
       root.hidden = true;
-      if (next === 'granted') loadAnalytics();
+      if (next === 'granted') {
+        if (started) {
+          window.gtag('consent', 'update', { analytics_storage: 'granted' });
+          window['ga-disable-' + measurementId] = false;
+        } else {
+          loadAnalytics();
+        }
+        return;
+      }
+      if (started) {
+        // Basic Consent Mode: stop collection immediately and reload the tab
+        // with a persistent denial so Google Analytics cannot be reloaded.
+        window['ga-disable-' + measurementId] = true;
+        window.gtag('consent', 'update', { analytics_storage: 'denied' });
+        window.location.reload();
+      }
     };
     root.querySelectorAll('[data-consent]').forEach((button) => {
       button.addEventListener('click', () => save(button.getAttribute('data-consent')));
@@ -67,7 +82,7 @@ const measurementId = /^G-[A-Z0-9]+$/.test(configuredId) ? configuredId : "";
     });
     document.addEventListener('click', (event) => {
       const link = event.target.closest('a[data-track-event]');
-      if (!link || !started || typeof window.gtag !== 'function') return;
+      if (!link || choice !== 'granted' || !started || typeof window.gtag !== 'function') return;
       const eventName = link.getAttribute('data-track-event');
       if (!/^[a-z_]+$/.test(eventName)) return;
       const project = link.getAttribute('data-track-project');
