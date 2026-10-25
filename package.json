@@ -1,6 +1,6 @@
 {
-  "name": "homepage",
-  "description": "Build a personal website, blog, or portfolio with Astro.",
+  "name": "ailton-homepage",
+  "description": "Portfólio bilíngue de Ailton Rodrigues — Astro e Cloudflare Workers",
   "cloudflare": {
     "label": "Astro Framework Starter",
     "products": [
@@ -20,7 +20,10 @@
     "typescript": "5.9.3"
   },
   "devDependencies": {
-    "wrangler": "4.136.1"
+    "wrangler": "4.136.1",
+    "@astrojs/check": "0.9.12",
+    "@playwright/test": "1.64.1",
+    "sharp": "0.34.5"
   },
   "engines": {
     "node": ">=22"
@@ -28,14 +31,17 @@
   "private": true,
   "scripts": {
     "astro": "astro",
-    "build": "astro build",
+    "build": "npm run generate:og && astro build",
     "cf-typegen": "wrangler types",
-    "check": "astro build && tsc && wrangler deploy --dry-run",
+    "check": "npm run build && npm run check:astro && npm run check:i18n && npm run check:analytics && npm run check:e2e && wrangler deploy --dry-run",
     "deploy": "wrangler deploy",
     "dev": "astro dev",
     "preview": "astro build && wrangler dev",
     "check:i18n": "node scripts/check-i18n.mjs",
-    "check:analytics": "node scripts/check-analytics.mjs"
+    "check:analytics": "node scripts/check-analytics.mjs",
+    "generate:og": "node scripts/generate-og.mjs",
+    "check:astro": "astro check",
+    "check:e2e": "playwright test"
   },
   "type": "module"
 }

@@ -17,7 +17,7 @@ const base = Astro.site ?? new URL("https://ailton.dev.br");
 const canonical = new URL(Astro.url.pathname, base);
 const portuguese = new URL(equivalentPath(Astro.url.pathname, "pt"), base);
 const english = new URL(equivalentPath(Astro.url.pathname, "en"), base);
-const image = new URL(lang === "en" ? "/og-en.svg" : "/og.svg", base);
+const image = new URL(lang === "en" ? "/og-en.png" : "/og.png", base);
 ---
 <!doctype html>
 <html lang={lang === "pt" ? "pt-BR" : "en"}>
@@ -45,6 +45,9 @@ const image = new URL(lang === "en" ? "/og-en.svg" : "/og.svg", base);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image.toString()} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />

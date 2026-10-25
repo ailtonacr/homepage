@@ -7,26 +7,57 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
-      - name: Install dependencies from lockfile
+      # Temporary one-time lockfile normalization; remove after successful commit.
+      - name: Regenerate dependency lockfile
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Commit regenerated lockfile to PR branch
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          if ! git diff --quiet -- package-lock.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add package-lock.json
+            git commit -m "chore: lock Astro checks, Playwright and OG generator"
+            git push origin HEAD:"${{ github.head_ref }}"
+          fi
+      - name: Install locked dependencies
         run: npm ci
-      - name: Build the actual Astro source
+      - name: Build Astro and localized OG PNGs
         run: npm run build
-      - name: Typecheck bilingual dictionaries
-        run: npx tsc --noEmit
-      - name: Validate localized build and browser language detection
+      - name: Check Astro templates and components
+        run: npm run check:astro
+      - name: Check localized pages and language selection
         run: npm run check:i18n
-      - name: Validate actual analytics consent + revocation script
-        run: node scripts/check-analytics.mjs
-      - name: Validate Cloudflare deployment bundle (no deploy)
+      - name: Check real analytics consent and revocation
+        run: npm run check:analytics
+      - name: Check generated Open Graph images
+        run: node scripts/check-og.mjs
+      - name: Install Chromium and WebKit browsers
+        run: npx playwright install --with-deps chromium webkit
+      - name: Real desktop and mobile browser review
+        run: npm run check:e2e
+      - name: Validate Cloudflare assets without deploying
         run: npx wrangler deploy --dry-run
+      - name: Upload visual review screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-browser-review
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14

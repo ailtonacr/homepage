@@ -46,3 +46,10 @@ The i18n validator checks each case study has a paired English and Portuguese ve
 - Preview visuals are HTML/CSS illustrations, not screenshots of deployed products.
 - Fonts use Google Fonts. Self-hosting can be added later for additional privacy.
 - Verify that any added external project URLs are public before exposing them.
+
+## Pre-merge validation / quality gates
+
+- `npm run check:astro` performs template-aware checking with `@astrojs/check` (unlike plain `tsc`).
+- `npm run check:e2e` runs Playwright desktop Chromium, mobile Chromium and mobile WebKit; asserts navigation, language switching, filtering and page overflow.
+- `npm run generate:og` converts localized SVG source assets into 1200×630 PNG with sharp; build regenerates them automatically. `node scripts/check-og.mjs` checks actual files and metadata.
+- CI publishes browser screenshots and Playwright HTML reports as artifacts. WebKit on Linux emulates Mobile Safari; it is not a physical iPhone test.
