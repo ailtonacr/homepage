@@ -14,7 +14,7 @@ export default defineConfig({
     { name: "mobile-webkit", use: { ...devices["iPhone 13"], locale: "pt-BR" } },
   ],
   webServer: {
-    command: "npm run dev -- --host 127.0.0.1 --port 4321",
+    command: "npx wrangler dev --ip 127.0.0.1 --port 4321 --local",
     url: "http://127.0.0.1:4321/",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
