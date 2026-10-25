@@ -1,0 +1,48 @@
+name: Validate portfolio
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Build Astro and localized OG PNGs
+        run: npm run build
+      - name: Check Astro templates and components
+        run: npm run check:astro
+      - name: Check localized pages and language selection
+        run: npm run check:i18n
+      - name: Check real analytics consent and revocation
+        run: npm run check:analytics
+      - name: Check generated Open Graph images
+        run: node scripts/check-og.mjs
+      - name: Install Chromium and WebKit browsers
+        run: npx playwright install --with-deps chromium webkit
+      - name: Real desktop and mobile browser review
+        run: npm run check:e2e
+      - name: Validate Cloudflare assets without deploying
+        run: npx wrangler deploy --dry-run
+      - name: Upload visual review screenshots and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: portfolio-browser-review
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14

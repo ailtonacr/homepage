@@ -1,0 +1,94 @@
+---
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const configuredId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
+const measurementId = /^G-[A-Z0-9]+$/.test(configuredId) ? configuredId : "";
+---
+{measurementId && (
+  <section class="consent" data-consent-root data-measurement-id={measurementId} aria-labelledby="consent-title" hidden>
+    <div class="consent-body">
+      <span class="eyebrow">{t(lang, "consentKicker")}</span>
+      <h2 id="consent-title">{t(lang, "consentTitle")}</h2>
+      <p>{t(lang, "consentText")}</p>
+      <div class="consent-actions">
+        <button class="button button-secondary" type="button" data-consent="denied">{t(lang, "denyConsent")}</button>
+        <a class="button button-soft" href={localePath(lang, "privacy")}>{t(lang, "consentUnderstand")}</a>
+        <button class="button button-primary" type="button" data-consent="granted">{t(lang, "consentAccept")}</button>
+      </div>
+      <a href={localePath(lang, "privacy")} class="consent-privacy">{t(lang, "consentPolicy")}</a>
+    </div>
+  </section>
+)}
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-consent-root]');
+    if (!root) return;
+    const measurementId = root.getAttribute('data-measurement-id');
+    if (!measurementId || !/^G-[A-Z0-9]+$/.test(measurementId)) return;
+    const key = 'ailton:analytics-consent:v1';
+    let choice = null;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved === 'granted' || saved === 'denied') choice = saved;
+    } catch { /* Private browser storage may be unavailable. */ }
+    let started = false;
+    const loadAnalytics = () => {
+      if (started) return;
+      started = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      });
+      window.gtag('consent', 'update', { analytics_storage: 'granted' });
+      window.gtag('js', new Date());
+      window.gtag('config', measurementId);
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(measurementId);
+      document.head.appendChild(script);
+    };
+    const save = (next) => {
+      choice = next;
+      try { localStorage.setItem(key, next); } catch {}
+      root.hidden = true;
+      if (next === 'granted') {
+        if (started) {
+          window.gtag('consent', 'update', { analytics_storage: 'granted' });
+          window['ga-disable-' + measurementId] = false;
+        } else {
+          loadAnalytics();
+        }
+        return;
+      }
+      if (started) {
+        // Basic Consent Mode: stop collection immediately and reload the tab
+        // with a persistent denial so Google Analytics cannot be reloaded.
+        window['ga-disable-' + measurementId] = true;
+        window.gtag('consent', 'update', { analytics_storage: 'denied' });
+        window.location.reload();
+      }
+    };
+    root.querySelectorAll('[data-consent]').forEach((button) => {
+      button.addEventListener('click', () => save(button.getAttribute('data-consent')));
+    });
+    document.querySelectorAll('[data-open-consent]').forEach((button) => {
+      button.hidden = false;
+      button.addEventListener('click', () => { root.hidden = false; root.querySelector('[data-consent="denied"]')?.focus(); });
+    });
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a[data-track-event]');
+      if (!link || choice !== 'granted' || !started || typeof window.gtag !== 'function') return;
+      const eventName = link.getAttribute('data-track-event');
+      if (!/^[a-z_]+$/.test(eventName)) return;
+      const project = link.getAttribute('data-track-project');
+      window.gtag('event', eventName, project ? { project_slug: project } : {});
+    });
+    if (choice === 'granted') loadAnalytics();
+    else if (choice === null) root.hidden = false;
+  })();
+</script>

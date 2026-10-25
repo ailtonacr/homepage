@@ -1,0 +1,26 @@
+/* Language controls share the design tokens from global.css */
+.language-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font: 600 .75rem/1.4 var(--font-mono);
+  color: var(--muted);
+}
+.language-switcher a {
+  min-height: 44px;
+  min-width: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+.language-switcher a[aria-current="true"] { background: var(--pale); color: var(--pine); }
+.language-switcher a:hover { color: var(--accent); }
+@media (max-width: 760px) {
+  .language-switcher { margin-left: auto; }
+  .mobile-navigation { margin-left: 0; }
+  .header-content { gap: 13px; }
+  .language-switcher a { min-width: 31px; }
+  .hero h1 { overflow-wrap: break-word; }
+}

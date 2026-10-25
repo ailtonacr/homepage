@@ -1,0 +1,10 @@
+---
+import { getCollection } from "astro:content";
+import ProjectStoryScreen from "../../screens/ProjectStoryScreen.astro";
+export async function getStaticPaths() {
+  const entries = await getCollection("projects", ({data}) => data.locale === "pt");
+  return entries.map(project => ({ params: { slug: project.id.split("/").pop() }, props: { project } }));
+}
+const { project } = Astro.props;
+---
+<ProjectStoryScreen project={project} lang="pt" />

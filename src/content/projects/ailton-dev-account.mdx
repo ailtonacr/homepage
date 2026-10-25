@@ -1,0 +1,33 @@
+---
+title: Ailton Dev Account
+eyebrow: IDENTIDADE / AUTENTICAÇÃO / SSO
+summary: Uma identidade centralizada para acessar produtos, com experiência visual própria e padrões modernos de autenticação.
+description: Uma conta. Todos os produtos. Uma experiência de autenticação coerente entre aplicações.
+category: infraestrutura
+status: em-evolucao
+order: 2
+featured: true
+visual: account
+tags: [OIDC, ZITADEL, Next.js]
+highlights:
+  - label: Uma identidade
+    description: Um provedor central organiza a experiência de autenticação entre produtos.
+  - label: Fluxos seguros
+    description: Integrações OIDC seguem Authorization Code com PKCE e redirecionamentos verificados.
+  - label: Experiência própria
+    description: A camada visual conversa com os produtos sem reinventar o núcleo de identidade.
+---
+
+## Por que centralizar a identidade
+
+Manter contas separadas para cada produto gera fricção e aumenta manutenção. O Ailton Dev Account oferece identidade compartilhada com uma experiência visual consistente.
+
+## Uma separação importante
+
+Autenticação e autorização não são dados de negócio. O provedor concentra sessões, identidade e protocolos; cada aplicação preserva suas regras específicas.
+
+Os fluxos OIDC, PKCE, retorno de login e logout são parte do produto — não apenas detalhes de infraestrutura.
+
+## O desafio visual
+
+Um login técnico ainda precisa ser claro, acessível e familiar. Por isso, a personalização busca respeitar os fluxos nativos do provedor e dar personalidade à interface.

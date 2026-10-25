@@ -1,0 +1,17 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+---
+<SiteLayout lang={lang} title={"404 | Ailton Rodrigues"} description={t(lang,"notFoundMetaDescription")} noindex>
+  <div class="container page-intro" style="padding-block:100px 140px">
+    <span class="eyebrow">{t(lang,"notFoundKicker")}</span>
+    <h1>{t(lang,"notFoundTitleFirst")}<br />{t(lang,"notFoundTitleSecond")}</h1>
+    <p>{t(lang,"notFoundDescription")}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href={localePath(lang,"home")}>{t(lang,"backHome")} →</a>
+      <a class="button button-secondary" href={localePath(lang,"projects")}>{t(lang,"seeProjects")} →</a>
+    </div>
+  </div>
+</SiteLayout>

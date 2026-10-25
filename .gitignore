@@ -200,3 +200,9 @@ dist
 
 ### Astro ###
 .astro/
+
+# Generated OG images and browser-test results
+/public/og.png
+/public/og-en.png
+/playwright-report/
+/test-results/

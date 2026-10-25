@@ -1,0 +1,33 @@
+---
+title: PasteMax
+eyebrow: APLICAÇÃO WEB / PWA / SINCRONIZAÇÃO
+summary: Uma área de transferência que conecta seus dispositivos, com experiência local-first e sincronização segura.
+description: Copiar em um dispositivo. Continuar em outro. Sem transformar algo simples em complicado.
+category: produto
+status: em-evolucao
+order: 1
+featured: true
+visual: pastemax
+tags: [Node.js, TypeScript, WebRTC, PostgreSQL]
+highlights:
+  - label: Local primeiro
+    description: O conteúdo local continua disponível sem depender de conectividade contínua.
+  - label: LAN e nuvem
+    description: WebRTC na rede local e WebSocket no servidor atendem cenários diferentes.
+  - label: Privacidade
+    description: A sincronização em nuvem do plano Plus usa criptografia do lado do cliente.
+---
+
+## O problema
+
+Copiar um link, um trecho de código ou uma anotação deveria ser simples. Na prática, a informação acaba presa ao dispositivo onde foi copiada. O PasteMax explora uma experiência contínua entre aparelhos sem tratar a nuvem como requisito obrigatório.
+
+## Como organizei a arquitetura
+
+A aplicação usa PWA com persistência local. Quando dois dispositivos estão na mesma rede, a comunicação LAN pode utilizar WebRTC. Para o plano Plus, há também sincronização remota com WebSocket e criptografia realizada no cliente antes do envio de conteúdo.
+
+Esses caminhos são complementares: o Free privilegia a experiência local, enquanto o Plus acrescenta sincronização em nuvem e retenção conforme o plano.
+
+## O que continuo aprendendo
+
+Sincronização envolve reconciliação, sessões, funcionamento offline, limites e particularidades de navegadores móveis. O projeto continua em evolução com foco em clareza para quem usa.
