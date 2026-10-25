@@ -3,19 +3,24 @@ import "../styles/global.css";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import CookieConsent from "../components/CookieConsent.astro";
+import { equivalentPath, type Locale, t } from "../i18n";
 
 interface Props {
+  lang: Locale;
   title: string;
   description: string;
   ogType?: "website" | "article";
   noindex?: boolean;
 }
-const { title, description, ogType = "website", noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? "https://ailton.dev.br");
-const image = new URL("/og.svg", Astro.site ?? "https://ailton.dev.br");
+const { lang, title, description, ogType = "website", noindex = false } = Astro.props;
+const base = Astro.site ?? new URL("https://ailton.dev.br");
+const canonical = new URL(Astro.url.pathname, base);
+const portuguese = new URL(equivalentPath(Astro.url.pathname, "pt"), base);
+const english = new URL(equivalentPath(Astro.url.pathname, "en"), base);
+const image = new URL("/og.svg", base);
 ---
 <!doctype html>
-<html lang="pt-BR">
+<html lang={lang === "pt" ? "pt-BR" : "en"}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,13 +28,17 @@ const image = new URL("/og.svg", Astro.site ?? "https://ailton.dev.br");
     <meta name="generator" content={Astro.generator} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="canonical" href={canonical.toString()} />
+    <link rel="alternate" hreflang="pt-BR" href={portuguese.toString()} />
+    <link rel="alternate" hreflang="en" href={english.toString()} />
+    <link rel="alternate" hreflang="x-default" href={portuguese.toString()} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex,follow" />}
-    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale" content={lang === "pt" ? "pt_BR" : "en_US"} />
+    <meta property="og:locale:alternate" content={lang === "pt" ? "en_US" : "pt_BR"} />
     <meta property="og:site_name" content="Ailton Rodrigues" />
     <meta property="og:type" content={ogType} />
     <meta property="og:url" content={canonical.toString()} />
@@ -40,13 +49,56 @@ const image = new URL("/og.svg", Astro.site ?? "https://ailton.dev.br");
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image.toString()} />
+    <!-- Static hosting: detect browser language only in the client before painting.
+         Explicit manual choice wins across visits. No geolocation or external calls. -->
+    <script is:inline>
+      (() => {
+        const KEY = 'ailton:site-language:v1';
+        const pathname = location.pathname;
+        const parseLanguage = (value) => value === 'en' || value === 'pt' ? value : null;
+        let selected = null;
+        try { selected = parseLanguage(localStorage.getItem(KEY)); } catch {}
+        if (!selected) {
+          const match = document.cookie.match(/(?:^|;\s*)site_lang=(en|pt)(?:;|$)/);
+          if (match) selected = match[1];
+        }
+        if (!selected) {
+          const languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'pt'];
+          const match = languages.find((code) => /^pt(?:-|$)|^en(?:-|$)/i.test(code));
+          selected = match && /^en(?:-|$)/i.test(match) ? 'en' : 'pt';
+        }
+        const parts = pathname.split('/').filter(Boolean);
+        const english = parts[0] === 'en';
+        const remaining = english ? parts.slice(1) : parts;
+        const first = remaining[0] || '';
+        let equivalent;
+        if (!first) equivalent = selected === 'en' ? '/en/' : '/';
+        else if (first === 'projetos' || first === 'projects') equivalent = (selected === 'en' ? '/en/projects/' : '/projetos/') + (remaining[1] ? encodeURIComponent(decodeURIComponent(remaining[1])) + '/' : '');
+        else {
+          const routes = { sobre: ['sobre', 'about'], about: ['sobre', 'about'], contato: ['contato', 'contact'], contact: ['contato', 'contact'], privacidade: ['privacidade', 'privacy'], privacy: ['privacidade', 'privacy'], '404': ['404', '404'] };
+          if (routes[first]) equivalent = (selected === 'en' ? '/en/' + routes[first][1] : '/' + routes[first][0]) + '/';
+        }
+        if (equivalent && equivalent !== pathname) {
+          location.replace(equivalent + location.search + location.hash);
+          return;
+        }
+        document.addEventListener('click', (event) => {
+          const link = event.target.closest && event.target.closest('a[data-language-choice]');
+          if (!link) return;
+          const value = parseLanguage(link.dataset.languageChoice);
+          if (!value) return;
+          try { localStorage.setItem(KEY, value); } catch {}
+          document.cookie = 'site_lang=' + value + '; Path=/; SameSite=Lax; Max-Age=31536000; Secure';
+        }, true);
+      })();
+    </script>
     <slot name="head" />
   </head>
   <body>
-    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
-    <Header />
+    <a class="skip-link" href="#conteudo">{t(lang, "skip")}</a>
+    <Header lang={lang} />
     <main id="conteudo"><slot /></main>
-    <Footer />
-    <CookieConsent />
+    <Footer lang={lang} />
+    <CookieConsent lang={lang} />
   </body>
 </html>

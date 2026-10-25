@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const projects = (await getCollection("projects", ({ data }) => data.locale === lang)).sort((a,b) => a.data.order-b.data.order);
+const filters = [
+  { value: "todos", label: t(lang, "filterAll") },
+  { value: "produto", label: t(lang, "filterApps") },
+  { value: "infraestrutura", label: t(lang, "filterInfrastructure") },
+  { value: "automacao", label: t(lang, "filterAutomation") },
+  { value: "experimento", label: t(lang, "filterExperiments") },
+];
+---
+<SiteLayout lang={lang} title={t(lang, "navProjects") + " | Ailton Rodrigues"} description={t(lang, "projectsDescription")}>
+  <section class="container page-intro">
+    <span class="eyebrow">{t(lang, "catalogueKicker")}</span>
+    <h1>{t(lang, "catalogueTitleFirst")}<br />{t(lang, "catalogueTitleSecond")}</h1>
+    <p>{t(lang, "catalogueDescription")}</p>
+    <div class="project-filters" role="group" aria-label={t(lang, "filterLabel")}>
+      {filters.map(({value,label}) => <button type="button" class="filter-button" aria-pressed={value === "todos" ? "true" : "false"} data-project-filter={value}>{label}{value === "todos" && <span> ({String(projects.length).padStart(2, "0")})</span>}</button>)}
+    </div>
+  </section>
+  <section class="container catalog" aria-label={t(lang, "navProjects")}>
+    {projects.map((project,index) => {
+      const slug = project.id.split("/").pop() ?? project.id;
+      return <article class="catalog-row" data-project-category={project.data.category}>
+        <span class="catalog-number">{String(index+1).padStart(2,"0")}</span>
+        <div class="catalog-info">
+          <h2><a href={localePath(lang,"case",slug)} data-track-event="select_project" data-track-project={slug}>{project.data.title}</a></h2>
+          <p class="eyebrow">{project.data.eyebrow}</p>
+          <p>{project.data.summary}</p>
+          <div class="catalog-tags">{project.data.tags.slice(0,3).join(" / ")}</div>
+        </div>
+        <a class="catalog-poster" data-color={project.data.visual} href={localePath(lang,"case",slug)} data-track-event="select_project" data-track-project={slug} aria-label={t(lang, "readStory") + ": " + project.data.title}>
+          <span>// ailton.dev.br — {String(index+1).padStart(2,"0")}</span><strong>{project.data.title}</strong><em>{t(lang, "readStory")} →</em>
+        </a>
+      </article>;
+    })}
+    <p data-project-empty hidden>{t(lang, "noProjectFound")}</p>
+  </section>
+  <section class="catalog-end"><div class="container">
+    <span class="eyebrow">{t(lang, "didNotFind")}</span>
+    <h2>{t(lang, "moreOnWay")}</h2>
+    <a href={localePath(lang,"contact")} class="link-arrow">{t(lang, "letsTalk")} <span aria-hidden="true">→</span></a>
+  </div></section>
+</SiteLayout>
+<script>
+  const filters = document.querySelectorAll<HTMLButtonElement>("[data-project-filter]");
+  const rows = document.querySelectorAll<HTMLElement>("[data-project-category]");
+  const empty = document.querySelector<HTMLElement>("[data-project-empty]");
+  filters.forEach((button) => button.addEventListener("click", () => {
+    const selected = button.dataset.projectFilter;
+    filters.forEach((item) => item.setAttribute("aria-pressed", item === button ? "true" : "false"));
+    let visible = 0;
+    rows.forEach((row) => {
+      row.hidden = selected !== "todos" && row.dataset.projectCategory !== selected;
+      if (!row.hidden) visible++;
+    });
+    if (empty) empty.hidden = visible > 0;
+  }));
+</script>

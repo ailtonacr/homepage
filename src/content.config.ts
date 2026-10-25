@@ -4,6 +4,7 @@ import { defineCollection, z } from "astro:content";
 const projects = defineCollection({
   loader: glob({ base: "./src/content/projects", pattern: "**/*.{md,mdx}" }),
   schema: z.object({
+    locale: z.enum(["pt", "en"]).default("pt"),
     title: z.string(),
     eyebrow: z.string(),
     summary: z.string(),
@@ -19,5 +20,4 @@ const projects = defineCollection({
     repository: z.string().url().optional(),
   }),
 });
-
 export const collections = { projects };

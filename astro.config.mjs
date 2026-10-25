@@ -7,4 +7,9 @@ export default defineConfig({
   site: "https://ailton.dev.br",
   output: "static",
   integrations: [mdx(), sitemap()],
+  i18n: {
+    defaultLocale: "pt",
+    locales: ["pt", "en"],
+    routing: { prefixDefaultLocale: false },
+  },
 });

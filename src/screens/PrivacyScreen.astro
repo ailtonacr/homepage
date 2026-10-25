@@ -1,0 +1,23 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+---
+<SiteLayout lang={lang} title={t(lang,"privacy") + " | Ailton Rodrigues"} description={t(lang,"privacyMetaDescription")}>
+  <article class="container privacy-page">
+    <span class="eyebrow">{t(lang,"privacyKicker")}</span>
+    <h1>{t(lang,"privacyTitle")}</h1>
+    <p>{t(lang,"privacyIntro")}</p>
+    <h2>{t(lang,"analyticsHeading")}</h2>
+    <p>{t(lang,"analyticsPrivacy")}</p>
+    <p>{t(lang,"analyticsThirdParty")}</p>
+    <h2>{t(lang,"preferenceHeading")}</h2>
+    <p>{t(lang,"preferenceDescription")}</p>
+    <p>{t(lang,"preferenceReset")}</p>
+    <h2>{t(lang,"externalHeading")}</h2>
+    <p>{t(lang,"externalDescription")}</p>
+    <h2>{t(lang,"privacyContactHeading")}</h2>
+    <p>{t(lang,"privacyContactIntro")} <a href="https://www.linkedin.com/in/ailtonacr/" target="_blank" rel="noopener noreferrer">LinkedIn</a> {t(lang,"privacyContactOr")} <a href={localePath(lang,"contact")}>{t(lang,"privacyContactPage")}</a>.</p>
+  </article>
+</SiteLayout>

@@ -1,0 +1,12 @@
+---
+import { equivalentPath, otherLocale, t, type Locale } from "../i18n";
+interface Props { lang: Locale; }
+const { lang } = Astro.props;
+const destination = otherLocale(lang);
+---
+<nav class="language-switcher" aria-label={t(lang, "languages")}>
+  <span class="sr-only">{t(lang, "selectLanguage")}</span>
+  <a href={equivalentPath(Astro.url.pathname, "pt")} lang="pt-BR" hreflang="pt-BR" aria-current={lang === "pt" ? "true" : undefined} data-language-choice="pt">PT</a>
+  <span aria-hidden="true">/</span>
+  <a href={equivalentPath(Astro.url.pathname, "en")} lang="en" hreflang="en" aria-current={lang === "en" ? "true" : undefined} data-language-choice="en">EN</a>
+</nav>

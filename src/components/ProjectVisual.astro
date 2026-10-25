@@ -1,29 +1,31 @@
 ---
+import { t, type Locale } from "../i18n";
 interface Props {
   variant: "pastemax" | "account" | "meushape" | "crypbot" | "tavalendo" | "delivery";
+  lang: Locale;
   compact?: boolean;
 }
-const { variant, compact = false } = Astro.props;
+const { variant, lang, compact = false } = Astro.props;
 ---
 <div class:list={["project-visual", "visual-" + variant, { "visual-compact": compact }]} aria-hidden="true">
   <div class="visual-browser"><span>○ ○ ○</span><span>{variant === "account" ? "AILTON DEV ACCOUNT" : variant === "pastemax" ? "PASTEMAX" : variant.toUpperCase()}</span></div>
   <div class="visual-window">
     {variant === "pastemax" && (
       <>
-        <strong>Copie aqui. Continue em qualquer lugar.</strong>
-        <div class="visual-tiles"><span><small>01</small>Uma ideia para guardar</span><span><small>02</small>Trecho de código</span><span><small>03</small>Link importante</span></div>
+        <strong>{t(lang, "visualPasteTitle")}</strong>
+        <div class="visual-tiles"><span><small>01</small>{t(lang, "visualIdea")}</span><span><small>02</small>{t(lang, "visualCode")}</span><span><small>03</small>{t(lang, "visualLink")}</span></div>
       </>
     )}
     {variant === "account" && (
       <>
-        <strong>Uma conta. Todos os produtos.</strong>
-        <span class="visual-small">Bem-vindo de volta</span>
+        <strong>{t(lang, "visualAccountTitle")}</strong>
+        <span class="visual-small">{t(lang, "visualWelcome")}</span>
         <div class="visual-input"></div><div class="visual-input short"></div><div class="visual-submit"></div>
       </>
     )}
     {variant === "meushape" && (
       <>
-        <strong>Seu progresso, no seu ritmo.</strong>
+        <strong>{t(lang, "visualShapeTitle")}</strong>
         <div class="visual-bars"><span>01</span><span>02</span><span>03</span><span>04</span></div>
       </>
     )}
@@ -36,14 +38,14 @@ const { variant, compact = false } = Astro.props;
     {variant === "tavalendo" && (
       <>
         <strong>Tá Valendo.</strong>
-        <div class="visual-tiles"><span><small>01</small>Uma ideia</span><span><small>02</small>Uma experiência</span><span><small>03</small>Um produto</span></div>
+        <div class="visual-tiles"><span><small>01</small>{t(lang, "visualTaIdea")}</span><span><small>02</small>{t(lang, "visualTaExperience")}</span><span><small>03</small>{t(lang, "visualTaProduct")}</span></div>
       </>
     )}
     {variant === "delivery" && (
       <>
         <strong>Delivery Express.</strong>
-        <p>Jornadas digitais para conectar serviços e pessoas.</p>
-        <div class="visual-route">ORIGEM ━━━ ● ━━━ DESTINO</div>
+        <p>{t(lang, "visualDelivery")}</p>
+        <div class="visual-route">{t(lang, "visualOrigin")} ━━━ ● ━━━ {t(lang, "visualDestination")}</div>
       </>
     )}
   </div>

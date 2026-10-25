@@ -1,19 +1,24 @@
+---
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+---
 <footer class="site-footer">
   <div class="container">
     <div class="footer-intro">
-      <span class="eyebrow">Tem alguma ideia em mente?</span>
-      <h2>Vamos conversar.</h2>
+      <span class="eyebrow">{t(lang, "conversationKicker")}</span>
+      <h2>{t(lang, "letsTalk")}</h2>
       <div class="footer-socials">
         <a href="https://github.com/ailtonacr" target="_blank" rel="noopener noreferrer" data-track-event="outbound_link">GitHub <span aria-hidden="true">↗</span></a>
         <a href="https://www.linkedin.com/in/ailtonacr/" target="_blank" rel="noopener noreferrer" data-track-event="outbound_link">LinkedIn <span aria-hidden="true">↗</span></a>
-        <a href="/contato/">Contato <span aria-hidden="true">→</span></a>
+        <a href={localePath(lang, "contact")}>{t(lang, "navContact")} <span aria-hidden="true">→</span></a>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© {new Date().getFullYear()} Ailton Rodrigues <span class="footer-separator">/</span> Feito com calma, curiosidade e café.</span>
+      <span>© {new Date().getFullYear()} Ailton Rodrigues <span class="footer-separator">/</span> {t(lang, "madeWith")}</span>
       <div class="footer-legal">
-        <a href="/privacidade/">Privacidade</a>
-        <button type="button" data-open-consent hidden>Preferências de cookies</button>
+        <a href={localePath(lang, "privacy")}>{t(lang, "privacy")}</a>
+        <button type="button" data-open-consent hidden>{t(lang, "cookieSettings")}</button>
       </div>
     </div>
   </div>

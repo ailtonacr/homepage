@@ -1,11 +1,4 @@
 ---
-import SiteLayout from "../layouts/SiteLayout.astro";
+import NotFoundScreen from "../screens/NotFoundScreen.astro";
 ---
-<SiteLayout title="Página não encontrada | Ailton Rodrigues" description="Esta página não foi encontrada." noindex>
-  <div class="container page-intro" style="padding-block:100px 140px">
-    <span class="eyebrow">Erro 404 / Rota desconhecida</span>
-    <h1>Essa ideia ainda<br />não está por aqui.</h1>
-    <p>O endereço mudou ou nunca existiu. Você pode voltar para a página inicial ou explorar o que estou construindo.</p>
-    <div class="hero-actions"><a class="button button-primary" href="/">Voltar para a home →</a><a class="button button-secondary" href="/projetos/">Ver projetos →</a></div>
-  </div>
-</SiteLayout>
+<NotFoundScreen lang="pt" />

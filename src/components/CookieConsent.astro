@@ -1,18 +1,21 @@
 ---
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
 const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
 ---
 {measurementId && (
   <section class="consent" data-consent-root data-measurement-id={measurementId} aria-labelledby="consent-title" hidden>
     <div class="consent-body">
-      <span class="eyebrow">Uma nota sobre privacidade</span>
-      <h2 id="consent-title">Quer permitir estatísticas de acesso?</h2>
-      <p>Uso estatísticas anônimas de navegação para entender quais páginas e projetos interessam mais. Você pode recusar ou mudar de ideia quando quiser.</p>
+      <span class="eyebrow">{t(lang, "consentKicker")}</span>
+      <h2 id="consent-title">{t(lang, "consentTitle")}</h2>
+      <p>{t(lang, "consentText")}</p>
       <div class="consent-actions">
-        <button class="button button-secondary" type="button" data-consent="denied">Recusar opcionais</button>
-        <a class="button button-soft" href="/privacidade/">Entender melhor</a>
-        <button class="button button-primary" type="button" data-consent="granted">Aceitar estatísticas</button>
+        <button class="button button-secondary" type="button" data-consent="denied">{t(lang, "denyConsent")}</button>
+        <a class="button button-soft" href={localePath(lang, "privacy")}>{t(lang, "consentUnderstand")}</a>
+        <button class="button button-primary" type="button" data-consent="granted">{t(lang, "consentAccept")}</button>
       </div>
-      <a href="/privacidade/" class="consent-privacy">Política de privacidade</a>
+      <a href={localePath(lang, "privacy")} class="consent-privacy">{t(lang, "consentPolicy")}</a>
     </div>
   </section>
 )}
@@ -21,7 +24,6 @@ const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
     const root = document.querySelector('[data-consent-root]');
     if (!root) return;
     const measurementId = root.getAttribute('data-measurement-id');
-    // No GA4 request is made before a positive decision.
     if (!measurementId || !/^G-[A-Z0-9]+$/.test(measurementId)) return;
     const key = 'ailton:analytics-consent:v1';
     let choice = null;
@@ -30,7 +32,6 @@ const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
       if (saved === 'granted' || saved === 'denied') choice = saved;
     } catch { /* Private browser storage may be unavailable. */ }
     let started = false;
-
     const loadAnalytics = () => {
       if (started) return;
       started = true;
@@ -52,7 +53,7 @@ const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
     };
     const save = (next) => {
       choice = next;
-      try { localStorage.setItem(key, next); } catch { /* Session-only preference. */ }
+      try { localStorage.setItem(key, next); } catch {}
       root.hidden = true;
       if (next === 'granted') loadAnalytics();
     };
@@ -69,8 +70,7 @@ const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
       const eventName = link.getAttribute('data-track-event');
       if (!/^[a-z_]+$/.test(eventName)) return;
       const project = link.getAttribute('data-track-project');
-      const params = project ? { project_slug: project } : {};
-      window.gtag('event', eventName, params);
+      window.gtag('event', eventName, project ? { project_slug: project } : {});
     });
     if (choice === 'granted') loadAnalytics();
     else if (choice === null) root.hidden = false;

@@ -1,0 +1,49 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const timeline = [
+  { year: "2024", title: t(lang,"career2024Title"), description: t(lang,"career2024Description") },
+  { year: "2025", title: t(lang,"career2025Title"), description: t(lang,"career2025Description") },
+  { year: "2026", title: t(lang,"career2026Title"), description: t(lang,"career2026Description") },
+];
+const values = [
+  { number: "01", title: t(lang,"valueProduct"), description: t(lang,"valueProductDescription") },
+  { number: "02", title: t(lang,"valueEngineering"), description: t(lang,"valueEngineeringDescription") },
+  { number: "03", title: t(lang,"valueCuriosity"), description: t(lang,"valueCuriosityDescription") },
+];
+const stack = [
+  { title: t(lang,"stackLanguages"), description: "Python · TypeScript · Node.js · Go · Django" },
+  { title: t(lang,"stackInfrastructure"), description: "Docker · GCP · Cloudflare · CI/CD · Terraform" },
+  { title: t(lang,"stackData"), description: "PostgreSQL · Redis · BigQuery · OAuth/OIDC · WebSocket" },
+];
+---
+<SiteLayout lang={lang} title={t(lang,"navAbout") + " | Ailton Rodrigues"} description={t(lang,"aboutMetaDescription")}>
+  <section class="container about-hero">
+    <div><span class="eyebrow">{t(lang,"aboutKicker")}</span>
+      <h1>{t(lang,"aboutTitleFirst")}<br />{t(lang,"aboutTitleSecond")}<br />{t(lang,"aboutTitleThird")}</h1>
+      <p>{t(lang,"aboutDescription")}</p></div>
+    <div class="about-stamp" aria-label={t(lang,"maranhaoRio")}>
+      <span class="eyebrow">{t(lang,"developerDiary")}</span><strong>A / R</strong><div class="section-rule"></div>
+      <p>{t(lang,"maranhaoRio")}</p><p>{t(lang,"questions")}</p>
+    </div>
+  </section>
+  <section class="timeline-area"><div class="container">
+    <span class="eyebrow">{t(lang,"careerKicker")}</span><h2>{t(lang,"careerTitle")}</h2>
+    {timeline.map(item => <article class="timeline-row"><span>{item.year}</span><div><h3>{item.title}</h3><p>{item.description}</p></div></article>)}
+  </div></section>
+  <section class="values-area"><div class="container">
+    <span class="eyebrow">{t(lang,"valuesKicker")}</span>
+    <h2>{t(lang,"valuesTitleFirst")}<br />{t(lang,"valuesTitleSecond")}</h2>
+    <div class="values-grid">{values.map(item => <article><span class="eyebrow">{item.number} / {item.title}</span><h3>{item.title}</h3><p>{item.description}</p></article>)}</div>
+  </div></section>
+  <section class="container stack-area">
+    <span class="eyebrow">{t(lang,"toolsKicker")}</span>
+    <h2>{t(lang,"toolsTitleFirst")}<br />{t(lang,"toolsTitleSecond")}</h2>
+    {stack.map(item => <div class="stack-row"><span class="eyebrow">{item.title}</span><p>{item.description}</p></div>)}
+  </section>
+  <div class="container" style="padding-block:40px 65px">
+    <a class="link-arrow" href={localePath(lang,"projects")}>{t(lang,"exploreProjects")} <span aria-hidden="true">→</span></a>
+  </div>
+</SiteLayout>

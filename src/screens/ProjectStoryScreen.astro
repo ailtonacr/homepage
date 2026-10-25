@@ -1,0 +1,42 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import ProjectVisual from "../components/ProjectVisual.astro";
+import { localePath, t, type Locale } from "../i18n";
+interface Props { project: CollectionEntry<"projects">; lang: Locale; }
+const { project, lang } = Astro.props;
+const slug = project.id.split("/").pop() ?? project.id;
+const { Content } = await render(project);
+---
+<SiteLayout lang={lang} title={project.data.title + " — " + t(lang, "navProjects") + " | Ailton Rodrigues"} description={project.data.description} ogType="article">
+  <section class="story-hero"><div class="container">
+    <span class="eyebrow">{t(lang, "caseStudy")} / {String(project.data.order).padStart(2, "0")} / {project.data.eyebrow}</span>
+    <h1>{project.data.title}.</h1>
+    <p class="story-subtitle">{project.data.description}</p>
+    <div class="story-tags">{project.data.tags.slice(0,4).map((tag) => <span>{tag}</span>)}</div>
+  </div></section>
+  <section class="story-art" aria-label={project.data.title}><div class="container"><ProjectVisual variant={project.data.visual} lang={lang} /></div></section>
+  <section class="container story-grid">
+    <div><span class="eyebrow">{t(lang, "challenge")}</span><h2>{t(lang, "challengeTitleFirst")}<br />{t(lang, "challengeTitleSecond")}</h2></div>
+    <div><p>{project.data.summary}</p><p>{project.data.description}</p><p>{t(lang, "challengeDescription")}</p></div>
+  </section>
+  {project.data.highlights.length > 0 && <section class="story-body-section"><div class="container">
+    <span class="eyebrow">{t(lang, "behindProject")}</span>
+    <h2>{t(lang, "engineeringChoicesFirst")}<br />{t(lang, "engineeringChoicesSecond")}</h2>
+    <div class="story-highlights">{project.data.highlights.map((item,index) => <article class="story-highlight">
+      <span class="eyebrow">{String(index+1).padStart(2,"0")}</span><h3>{item.label}</h3><p>{item.description}</p>
+    </article>)}</div>
+  </div></section>}
+  <section class="container story-prose"><Content />
+    <div class="story-links">
+      {project.data.website && <a href={project.data.website} target="_blank" rel="noopener noreferrer" class="button button-primary" data-track-event="click_live_demo" data-track-project={slug}>{t(lang, "visitProject")} ↗</a>}
+      {project.data.repository && <a href={project.data.repository} target="_blank" rel="noopener noreferrer" class="button button-secondary" data-track-event="click_github" data-track-project={slug}>{t(lang, "sourceCode")} ↗</a>}
+    </div>
+  </section>
+  <section class="story-next"><div class="container">
+    <span class="eyebrow">{t(lang, "storyContinues")}</span>
+    <h2>{t(lang, "goodProducts")}</h2>
+    <a href={localePath(lang,"projects")}>← {t(lang, "allProjects")}</a>
+    <a href={localePath(lang,"contact")}>{t(lang, "letsTalk")} →</a>
+  </div></section>
+</SiteLayout>

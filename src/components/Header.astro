@@ -1,24 +1,29 @@
 ---
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+import { localePath, t, type Locale } from "../i18n";
+interface Props { lang: Locale }
+const { lang } = Astro.props;
 const path = Astro.url.pathname;
 const navigation = [
-  { href: "/projetos/", label: "Projetos" },
-  { href: "/sobre/", label: "Sobre" },
-  { href: "/contato/", label: "Contato" },
+  { href: localePath(lang, "projects"), label: t(lang, "navProjects") },
+  { href: localePath(lang, "about"), label: t(lang, "navAbout") },
+  { href: localePath(lang, "contact"), label: t(lang, "navContact") },
 ];
-const isActive = (href: string) => path === href || (href === "/projetos/" && path.startsWith("/projetos/"));
+const active = (href: string) => path === href || (href.endsWith(lang === "en" ? "/projects/" : "/projetos/") && path.startsWith(href));
 ---
 <header class="site-header">
   <div class="container header-content">
-    <a class="brand" href="/" aria-label="Ailton Rodrigues — página inicial">ailton<span>.dev.br</span></a>
-    <nav class="desktop-navigation" aria-label="Navegação principal">
-      {navigation.map(({ href, label }) => <a href={href} aria-current={isActive(href) ? "page" : undefined}>{label}</a>)}
+    <a class="brand" href={localePath(lang, "home")} aria-label={t(lang, "brandHome")}>ailton<span>.dev.br</span></a>
+    <nav class="desktop-navigation" aria-label={t(lang, "navigation")}>
+      {navigation.map(({ href, label }) => <a href={href} aria-current={active(href) ? "page" : undefined}>{label}</a>)}
     </nav>
-    <a class="header-status" href="/contato/"><span aria-hidden="true" class="status-dot"></span> Aberto a conexões</a>
+    <a class="header-status" href={localePath(lang, "contact")}><span aria-hidden="true" class="status-dot"></span>{t(lang, "availability")}</a>
+    <LanguageSwitcher lang={lang} />
     <details class="mobile-navigation">
-      <summary aria-label="Abrir menu de navegação"><span>Menu</span><span aria-hidden="true" class="menu-icon">☰</span></summary>
-      <nav aria-label="Navegação móvel">
-        <a href="/">Início</a>
-        {navigation.map(({ href, label }) => <a href={href} aria-current={isActive(href) ? "page" : undefined}>{label}</a>)}
+      <summary aria-label={t(lang, "openMenu")}><span>{t(lang, "menu")}</span><span aria-hidden="true" class="menu-icon">☰</span></summary>
+      <nav aria-label={t(lang, "mobileNavigation")}>
+        <a href={localePath(lang, "home")}>{t(lang, "navHome")}</a>
+        {navigation.map(({ href, label }) => <a href={href} aria-current={active(href) ? "page" : undefined}>{label}</a>)}
       </nav>
     </details>
   </div>

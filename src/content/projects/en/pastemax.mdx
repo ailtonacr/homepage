@@ -1,0 +1,36 @@
+---
+locale: en
+title: PasteMax
+eyebrow: WEB APP / PWA / SYNC
+summary: A clipboard that connects your devices with local-first behavior and secure synchronization.
+description: Copy on one device. Pick up on another. Without making something simple complicated.
+category: produto
+status: em-evolucao
+order: 1
+featured: true
+visual: pastemax
+tags: [Node.js, TypeScript, WebRTC, PostgreSQL]
+highlights:
+  - label: Local first
+    description: Your local content remains available even without a continuous internet connection.
+  - label: LAN and cloud
+    description: WebRTC on the local network and WebSocket on the server serve different use cases.
+  - label: Privacy
+    description: Plus cloud synchronization encrypts content on the client.
+---
+
+## The problem
+
+Copying a link, a snippet of code, or a note should be simple. In practice, that information often gets stuck on the device where it was copied.
+
+PasteMax explores an uninterrupted experience between devices without treating the cloud as a requirement. The first principle is simple: useful content should remain accessible on the device itself.
+
+## How the architecture fits together
+
+The app is a PWA with local persistence. When two devices share a network, LAN communication can use WebRTC. The Plus plan also offers remote synchronization through WebSocket, with content encrypted by the client before it is sent.
+
+These paths complement one another. Free prioritizes the local experience; Plus adds cloud sync and retention according to its plan.
+
+## What I'm still learning
+
+Synchronization involves reconciliation, sessions, offline behavior, plan limits, and differences across mobile browsers. PasteMax is evolving with a consistent goal: keep the experience simple, even when the engineering isn't.

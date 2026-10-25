@@ -1,0 +1,63 @@
+---
+import { getCollection } from "astro:content";
+import SiteLayout from "../layouts/SiteLayout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { localePath, t, type Locale } from "../i18n";
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const projects = (await getCollection("projects", ({ data }) => data.locale === lang)).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.filter((project) => project.data.featured).slice(0, 4);
+const secondary = [
+  { label: "Tá Valendo", description: t(lang, "secondaryTaValendo"), href: localePath(lang, "case", "ta-valendo") },
+  { label: "Delivery Express", description: t(lang, "secondaryDelivery"), href: localePath(lang, "case", "delivery-express") },
+  { label: t(lang, "filterInfrastructure") + " & " + t(lang, "filterAutomation"), description: t(lang, "secondaryInfra"), href: localePath(lang, "case", "ailton-dev-account") },
+];
+---
+<SiteLayout lang={lang} title={lang === "pt" ? "Ailton Rodrigues — Engenheiro de Software" : "Ailton Rodrigues — Software Engineer"} description={t(lang, "homeDescription")}>
+  <div class="container">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <span class="eyebrow">{t(lang, "heroKicker")}</span>
+        <h1 id="hero-title">{t(lang, "heroTitleFirst")} <span>{t(lang, "heroTitleSecond")}</span></h1>
+        <p class="hero-description">{t(lang, "heroDescription")}</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#projetos">{t(lang, "seeProjects")} <span aria-hidden="true">→</span></a>
+          <a class="button button-secondary" href={localePath(lang, "about")}>{t(lang, "myStory")} <span aria-hidden="true">→</span></a>
+        </div>
+        <p class="hero-location">{t(lang, "location")}</p>
+      </div>
+      <div class="hero-art" aria-label={t(lang, "curiosityFirst") + " " + t(lang, "curiositySecond")}>
+        <span class="eyebrow">{t(lang, "curiosityLabel")}</span>
+        <h2>{t(lang, "curiosityFirst")}<br />{t(lang, "curiositySecond")}</h2>
+        <div class="hero-art-divider"></div>
+        <div class="terminal-card" aria-hidden="true">
+          <p class="terminal-path">~/workspace/ailton ↗</p>
+          <code>&gt; {t(lang, "terminalBuild")}<br />&nbsp; ↳ {t(lang, "terminalDesign")}<br />&nbsp; ↳ {t(lang, "terminalExplore")}<br />&nbsp; ↳ {t(lang, "terminalSimplify")}<br />&nbsp; ✓ {t(lang, "terminalShip")}</code>
+        </div>
+        <p class="hero-art-note">{t(lang, "fewerPromises")}</p>
+      </div>
+    </section>
+    <section id="projetos" class="featured-section" aria-labelledby="projects-title">
+      <div class="section-rule"></div>
+      <div class="featured-intro">
+        <div><span class="eyebrow">{t(lang, "featuredKicker")}</span><h2 id="projects-title" class="section-title">{t(lang, "featuredTitleFirst")}<br />{t(lang, "featuredTitleSecond")}</h2></div>
+        <p>{t(lang, "featuredDescription")}</p>
+      </div>
+      <div class="projects-grid">{featured.map((project) => <ProjectCard project={project} lang={lang} />)}</div>
+    </section>
+    <section class="other-projects" aria-labelledby="more-title">
+      <div class="section-rule"></div>
+      <h2 id="more-title" class="eyebrow">{t(lang, "moreProjects")}</h2>
+      {secondary.map((item) => <a class="other-project" href={item.href}><h3>{item.label}</h3><p>{item.description}</p><span aria-hidden="true">→</span></a>)}
+    </section>
+  </div>
+  <section class="about-band" aria-labelledby="about-title">
+    <div class="container">
+      <span class="eyebrow">{t(lang, "beyondScreens")}</span>
+      <h2 id="about-title">{t(lang, "meaningTitleFirst")}<br />{t(lang, "meaningTitleSecond")}</h2>
+      <p>{t(lang, "meaningDescription")}</p>
+      <a href={localePath(lang, "about")} class="link-arrow">{t(lang, "moreAbout")} <span aria-hidden="true">→</span></a>
+    </div>
+  </section>
+</SiteLayout>

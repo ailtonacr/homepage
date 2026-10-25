@@ -1,17 +1,15 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { localePath, type Locale } from "../i18n";
 import ProjectVisual from "./ProjectVisual.astro";
-interface Props {
-  project: CollectionEntry<"projects">;
-  index?: number;
-}
-const { project, index = 0 } = Astro.props;
+interface Props { project: CollectionEntry<"projects">; lang: Locale; }
+const { project, lang } = Astro.props;
+const slug = project.id.split("/").pop() ?? project.id;
 ---
-<a class="project-card" href={"/projetos/" + project.id + "/"} data-track-event="select_project" data-track-project={project.id}>
-  <ProjectVisual variant={project.data.visual} />
+<a class="project-card" href={localePath(lang, "case", slug)} data-track-event="select_project" data-track-project={slug}>
+  <ProjectVisual variant={project.data.visual} lang={lang} />
   <div class="project-card-title"><h3>{project.data.title}</h3><span aria-hidden="true">→</span></div>
   <p class="eyebrow">{project.data.eyebrow}</p>
   <p class="project-card-summary">{project.data.summary}</p>
   <p class="project-card-stack">{project.data.tags.slice(0, 3).join(" · ")}</p>
-  <span class="sr-only">Conheça o projeto {project.data.title}</span>
 </a>
