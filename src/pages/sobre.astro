@@ -1,0 +1,37 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+const timeline = [
+  { year: "2024", title: "Primeiros passos na engenharia de software", description: "Experiência como estagiário de desenvolvimento na Globo." },
+  { year: "2025", title: "Aprendizado na prática", description: "Novas ferramentas, projetos próprios e aprofundamento em APIs, dados e infraestrutura." },
+  { year: "2026", title: "Engenheiro de software júnior", description: "Evolução profissional e continuidade no desenvolvimento de produtos e serviços." },
+];
+const values = [
+  { number: "01", title: "Produto", description: "Começar pelo problema e pela experiência de quem vai usar." },
+  { number: "02", title: "Engenharia", description: "Ser cuidadoso com segurança, manutenção e arquitetura." },
+  { number: "03", title: "Curiosidade", description: "Aprender, experimentar, revisar e melhorar sempre." },
+];
+const stack = [
+  { title: "Linguagens e frameworks", description: "Python · TypeScript · Node.js · Go · Django" },
+  { title: "Infraestrutura", description: "Docker · GCP · Cloudflare · CI/CD · Terraform" },
+  { title: "Dados e protocolos", description: "PostgreSQL · Redis · BigQuery · OAuth/OIDC · WebSocket" },
+];
+---
+<SiteLayout title="Sobre mim | Ailton Rodrigues" description="Conheça a trajetória, os valores e as tecnologias com que trabalho como engenheiro de software.">
+  <section class="container about-hero">
+    <div><span class="eyebrow">Um pouco sobre mim / Além do código</span><h1>Gosto de entender<br />o porquê antes<br />do como.</h1><p>Sou Ailton Rodrigues, engenheiro de software. Meu trabalho vive entre sistemas, produtos, APIs e aquela vontade de experimentar ideias novas até que elas façam sentido.</p></div>
+    <div class="about-stamp" aria-label="Ailton Rodrigues, do Maranhão ao Rio de Janeiro">
+      <span class="eyebrow">Diário de um desenvolvedor</span><strong>A / R</strong><div class="section-rule"></div><p>Maranhão → Rio de Janeiro</p><p>Software, gente e boas perguntas.</p>
+    </div>
+  </section>
+  <section class="timeline-area"><div class="container">
+    <span class="eyebrow">01 / Caminho profissional</span><h2>Um caminho feito de prática.</h2>
+    {timeline.map((item) => <article class="timeline-row"><span>{item.year}</span><div><h3>{item.title}</h3><p>{item.description}</p></div></article>)}
+  </div></section>
+  <section class="values-area"><div class="container"><span class="eyebrow">02 / Como gosto de trabalhar</span><h2>O melhor código é aquele<br />que ajuda alguém.</h2>
+    <div class="values-grid">{values.map((item) => <article><span class="eyebrow">{item.number} / {item.title}</span><h3>{item.title}</h3><p>{item.description}</p></article>)}</div>
+  </div></section>
+  <section class="container stack-area"><span class="eyebrow">03 / Caixa de ferramentas</span><h2>Ferramentas mudam.<br />A vontade de aprender, não.</h2>
+    {stack.map((item) => <div class="stack-row"><span class="eyebrow">{item.title}</span><p>{item.description}</p></div>)}
+  </section>
+  <div class="container" style="padding-block:40px 65px"><a class="link-arrow" href="/projetos/">Dê uma olhada nos projetos <span aria-hidden="true">→</span></a></div>
+</SiteLayout>

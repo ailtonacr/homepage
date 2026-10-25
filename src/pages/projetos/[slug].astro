@@ -1,0 +1,38 @@
+---
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import ProjectVisual from "../../components/ProjectVisual.astro";
+
+interface Props { project: CollectionEntry<"projects">; }
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+<SiteLayout title={project.data.title + " — Projeto | Ailton Rodrigues"} description={project.data.description} ogType="article">
+  <section class="story-hero"><div class="container">
+    <span class="eyebrow">Estudo de caso / {String(project.data.order).padStart(2, "0")} / {project.data.eyebrow}</span>
+    <h1>{project.data.title}.</h1>
+    <p class="story-subtitle">{project.data.description}</p>
+    <div class="story-tags">{project.data.tags.slice(0, 4).map((tag) => <span>{tag}</span>)}</div>
+  </div></section>
+  <section class="story-art" aria-label={"Prévia conceitual do projeto " + project.data.title}><div class="container"><ProjectVisual variant={project.data.visual} /></div></section>
+  <section class="container story-grid">
+    <div><span class="eyebrow">01 / O desafio</span><h2>Um problema real.<br />Uma ideia para explorar.</h2></div>
+    <div><p>{project.data.summary}</p><p>{project.data.description}</p><p>Este projeto representa decisões técnicas e aprendizados ao longo do desenvolvimento, em diferentes estágios de maturidade.</p></div>
+  </section>
+  {project.data.highlights.length > 0 && <section class="story-body-section"><div class="container">
+    <span class="eyebrow">02 / Por trás do produto</span>
+    <h2>Decisões de engenharia<br />que fazem diferença.</h2>
+    <div class="story-highlights">{project.data.highlights.map((item, index) => <article class="story-highlight"><span class="eyebrow">{String(index + 1).padStart(2, "0")}</span><h3>{item.label}</h3><p>{item.description}</p></article>)}</div>
+  </div></section>}
+  <section class="container story-prose"><Content />
+    <div class="story-links">
+      {project.data.website && <a href={project.data.website} target="_blank" rel="noopener noreferrer" class="button button-primary" data-track-event="click_live_demo" data-track-project={project.id}>Visitar projeto ↗</a>}
+      {project.data.repository && <a href={project.data.repository} target="_blank" rel="noopener noreferrer" class="button button-secondary" data-track-event="click_github" data-track-project={project.id}>Ver código-fonte ↗</a>}
+    </div>
+  </section>
+  <section class="story-next"><div class="container"><span class="eyebrow">A história continua</span><h2>Produtos bons não nascem prontos.</h2><a href="/projetos/">← Todos os projetos</a><a href="/contato/">Vamos conversar →</a></div></section>
+</SiteLayout>

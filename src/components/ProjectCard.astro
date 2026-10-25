@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from "astro:content";
+import ProjectVisual from "./ProjectVisual.astro";
+interface Props {
+  project: CollectionEntry<"projects">;
+  index?: number;
+}
+const { project, index = 0 } = Astro.props;
+---
+<a class="project-card" href={"/projetos/" + project.id + "/"} data-track-event="select_project" data-track-project={project.id}>
+  <ProjectVisual variant={project.data.visual} />
+  <div class="project-card-title"><h3>{project.data.title}</h3><span aria-hidden="true">→</span></div>
+  <p class="eyebrow">{project.data.eyebrow}</p>
+  <p class="project-card-summary">{project.data.summary}</p>
+  <p class="project-card-stack">{project.data.tags.slice(0, 3).join(" · ")}</p>
+  <span class="sr-only">Conheça o projeto {project.data.title}</span>
+</a>

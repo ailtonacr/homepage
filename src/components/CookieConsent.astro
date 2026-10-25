@@ -1,0 +1,78 @@
+---
+const measurementId = (import.meta.env.PUBLIC_GA_MEASUREMENT_ID ?? "").trim();
+---
+{measurementId && (
+  <section class="consent" data-consent-root data-measurement-id={measurementId} aria-labelledby="consent-title" hidden>
+    <div class="consent-body">
+      <span class="eyebrow">Uma nota sobre privacidade</span>
+      <h2 id="consent-title">Quer permitir estatísticas de acesso?</h2>
+      <p>Uso estatísticas anônimas de navegação para entender quais páginas e projetos interessam mais. Você pode recusar ou mudar de ideia quando quiser.</p>
+      <div class="consent-actions">
+        <button class="button button-secondary" type="button" data-consent="denied">Recusar opcionais</button>
+        <a class="button button-soft" href="/privacidade/">Entender melhor</a>
+        <button class="button button-primary" type="button" data-consent="granted">Aceitar estatísticas</button>
+      </div>
+      <a href="/privacidade/" class="consent-privacy">Política de privacidade</a>
+    </div>
+  </section>
+)}
+<script is:inline>
+  (() => {
+    const root = document.querySelector('[data-consent-root]');
+    if (!root) return;
+    const measurementId = root.getAttribute('data-measurement-id');
+    // No GA4 request is made before a positive decision.
+    if (!measurementId || !/^G-[A-Z0-9]+$/.test(measurementId)) return;
+    const key = 'ailton:analytics-consent:v1';
+    let choice = null;
+    try {
+      const saved = localStorage.getItem(key);
+      if (saved === 'granted' || saved === 'denied') choice = saved;
+    } catch { /* Private browser storage may be unavailable. */ }
+    let started = false;
+
+    const loadAnalytics = () => {
+      if (started) return;
+      started = true;
+      window.dataLayer = window.dataLayer || [];
+      window.gtag = function () { window.dataLayer.push(arguments); };
+      window.gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      });
+      window.gtag('consent', 'update', { analytics_storage: 'granted' });
+      window.gtag('js', new Date());
+      window.gtag('config', measurementId);
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(measurementId);
+      document.head.appendChild(script);
+    };
+    const save = (next) => {
+      choice = next;
+      try { localStorage.setItem(key, next); } catch { /* Session-only preference. */ }
+      root.hidden = true;
+      if (next === 'granted') loadAnalytics();
+    };
+    root.querySelectorAll('[data-consent]').forEach((button) => {
+      button.addEventListener('click', () => save(button.getAttribute('data-consent')));
+    });
+    document.querySelectorAll('[data-open-consent]').forEach((button) => {
+      button.hidden = false;
+      button.addEventListener('click', () => { root.hidden = false; root.querySelector('[data-consent="denied"]')?.focus(); });
+    });
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('a[data-track-event]');
+      if (!link || !started || typeof window.gtag !== 'function') return;
+      const eventName = link.getAttribute('data-track-event');
+      if (!/^[a-z_]+$/.test(eventName)) return;
+      const project = link.getAttribute('data-track-project');
+      const params = project ? { project_slug: project } : {};
+      window.gtag('event', eventName, params);
+    });
+    if (choice === 'granted') loadAnalytics();
+    else if (choice === null) root.hidden = false;
+  })();
+</script>
