@@ -7,32 +7,17 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: npm
-      # Temporary one-time lockfile normalization; remove after successful commit.
-      - name: Regenerate dependency lockfile
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Commit regenerated lockfile to PR branch
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-        run: |
-          if ! git diff --quiet -- package-lock.json; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add package-lock.json
-            git commit -m "chore: lock Astro checks, Playwright and OG generator"
-            git push origin HEAD:"${{ github.head_ref }}"
-          fi
       - name: Install locked dependencies
         run: npm ci
       - name: Build Astro and localized OG PNGs

@@ -63,7 +63,7 @@ assert.equal(typeof selected.click,"function");
 selected.click({target:{closest:()=>({dataset:{languageChoice:"pt"}})}});
 assert.equal(selected.storage.get("ailton:site-language:v1"),"pt");
 assert.match(selected.document.cookie,/site_lang=pt/);
-assert.ok(built("en").includes("og-en.svg"),"English OG image missing");
+assert.ok(built("en").includes("og-en.png"),"English OG image missing");
 assert.ok(built("sobre").includes("Engenharia de Software"),"Confirmed education is absent in PT biography");
 assert.ok(built("en/about").includes("Software Engineering"),"Confirmed education is absent in EN biography");
 assert.ok(built("sobre").includes("Globo"),"Globo professional timeline missing in PT");
