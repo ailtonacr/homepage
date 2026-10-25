@@ -35,7 +35,7 @@
     "cf-typegen": "wrangler types",
     "check": "npm run build && npm run check:astro && npm run check:i18n && npm run check:analytics && npm run check:e2e && wrangler deploy --dry-run",
     "deploy": "wrangler deploy",
-    "dev": "astro dev",
+    "dev": "npm run generate:og && astro dev",
     "preview": "astro build && wrangler dev",
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:analytics": "node scripts/check-analytics.mjs",
