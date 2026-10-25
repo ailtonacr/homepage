@@ -333,3 +333,12 @@ ul { padding-left: 1.25rem; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Confirmed education / professional background */
+.education-area { padding-block: 64px 36px; border-top: 1px solid var(--line); }
+.education-area h2 { margin: 20px 0 28px; font: 400 clamp(2.6rem, 5vw, 4rem)/1.1 var(--font-display); }
+.education-card { max-width: 780px; padding: 28px 30px; border-radius: 5px; background: var(--pale); }
+.education-card strong { display: block; font-size: 1.45rem; }
+.education-card p { margin-top: 10px; color: var(--muted); }
+.education-card .link-arrow { display: inline-flex; margin-top: 20px; }
+@media (max-width: 760px) { .education-area { padding-top: 40px; } .education-card { padding: 23px 20px; } }

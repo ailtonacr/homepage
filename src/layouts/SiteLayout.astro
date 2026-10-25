@@ -49,7 +49,7 @@ const image = new URL(lang === "en" ? "/og-en.svg" : "/og.svg", base);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image.toString()} />
-    <!-- Static hosting: detect browser language only in the client before painting.
+    <!-- Static hosting: detect browser language at the canonical entry point before painting.
          Explicit manual choice wins across visits. No geolocation or external calls. -->
     <script is:inline>
       (() => {
@@ -63,9 +63,15 @@ const image = new URL(lang === "en" ? "/og-en.svg" : "/og.svg", base);
           if (match) selected = match[1];
         }
         if (!selected) {
-          const languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'pt'];
-          const match = languages.find((code) => /^pt(?:-|$)|^en(?:-|$)/i.test(code));
-          selected = match && /^en(?:-|$)/i.test(match) ? 'en' : 'pt';
+          // Auto-detect only at the canonical entry point.
+          // A shared language-specific URL must remain directly accessible
+          // to visitors and crawlers, regardless of navigator.language.
+          if (pathname !== '/') selected = pathname.startsWith('/en/') ? 'en' : 'pt';
+          else {
+            const languages = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || 'pt'];
+            const match = languages.find((code) => /^pt(?:-|$)|^en(?:-|$)/i.test(code));
+            selected = match && /^en(?:-|$)/i.test(match) ? 'en' : 'pt';
+          }
         }
         const parts = pathname.split('/').filter(Boolean);
         const english = parts[0] === 'en';

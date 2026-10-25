@@ -34,7 +34,8 @@
     "deploy": "wrangler deploy",
     "dev": "astro dev",
     "preview": "astro build && wrangler dev",
-    "check:i18n": "node scripts/check-i18n.mjs"
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "check:analytics": "node scripts/check-analytics.mjs"
   },
   "type": "module"
 }

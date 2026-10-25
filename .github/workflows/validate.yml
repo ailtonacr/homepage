@@ -26,5 +26,7 @@ jobs:
         run: npx tsc --noEmit
       - name: Validate localized build and browser language detection
         run: npm run check:i18n
+      - name: Validate actual analytics consent + revocation script
+        run: node scripts/check-analytics.mjs
       - name: Validate Cloudflare deployment bundle (no deploy)
         run: npx wrangler deploy --dry-run

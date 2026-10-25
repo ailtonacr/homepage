@@ -4,6 +4,7 @@ import { localePath, t, type Locale } from "../i18n";
 interface Props { lang: Locale }
 const { lang } = Astro.props;
 const timeline = [
+  { year: lang === "pt" ? "Até 2024" : "Before 2024", title: t(lang,"careerBeforeTitle"), description: t(lang,"careerBeforeDescription") },
   { year: "2024", title: t(lang,"career2024Title"), description: t(lang,"career2024Description") },
   { year: "2025", title: t(lang,"career2025Title"), description: t(lang,"career2025Description") },
   { year: "2026", title: t(lang,"career2026Title"), description: t(lang,"career2026Description") },
@@ -42,6 +43,16 @@ const stack = [
     <span class="eyebrow">{t(lang,"toolsKicker")}</span>
     <h2>{t(lang,"toolsTitleFirst")}<br />{t(lang,"toolsTitleSecond")}</h2>
     {stack.map(item => <div class="stack-row"><span class="eyebrow">{item.title}</span><p>{item.description}</p></div>)}
+  </section>
+  <section class="container education-area" aria-labelledby="education-title">
+    <span class="eyebrow">{t(lang,"educationKicker")}</span>
+    <h2 id="education-title">{t(lang,"educationTitle")}</h2>
+    <div class="education-card">
+      <strong>{t(lang,"educationDegree")}</strong>
+      <p>{t(lang,"educationPeriod")}</p>
+      <p>{t(lang,"educationNote")}</p>
+      <a class="link-arrow" href="https://www.linkedin.com/in/ailtonacr/" target="_blank" rel="noopener noreferrer" data-track-event="outbound_link">{t(lang,"professionalProfile")} <span aria-hidden="true">↗</span></a>
+    </div>
   </section>
   <div class="container" style="padding-block:40px 65px">
     <a class="link-arrow" href={localePath(lang,"projects")}>{t(lang,"exploreProjects")} <span aria-hidden="true">→</span></a>

@@ -50,15 +50,22 @@ function browser({pathname, languages, preference, cookie=""}) {
   return {redirect,click,storage,document};
 }
 assert.equal(browser({pathname:"/",languages:["en-US"]}).redirect,"/en/?sample=1#section");
-assert.equal(browser({pathname:"/en/",languages:["pt-BR"]}).redirect,"/?sample=1#section");
-assert.equal(browser({pathname:"/projetos/pastemax/",languages:["en-GB"]}).redirect,"/en/projects/pastemax/?sample=1#section");
+assert.equal(browser({pathname:"/en/",languages:["pt-BR"]}).redirect,null,"Explicit English URL must remain accessible");
+assert.equal(browser({pathname:"/projetos/pastemax/",languages:["en-GB"]}).redirect,null,"Explicit PT case study URL must be respected");
 assert.equal(browser({pathname:"/en/projects/pastemax/",languages:["en-US"],preference:"pt"}).redirect,"/projetos/pastemax/?sample=1#section");
 assert.equal(browser({pathname:"/sobre/",languages:["pt-BR"],preference:"en"}).redirect,"/en/about/?sample=1#section");
 assert.equal(browser({pathname:"/contato/",languages:["fr-FR"]}).redirect,null);
+assert.equal(browser({pathname:"/",languages:["fr-FR"]}).redirect,null,"Fallback should remain Portuguese");
+assert.equal(browser({pathname:"/",languages:["fr-FR","en-US"]}).redirect,"/en/?sample=1#section","Use the first supported browser language");
+assert.equal(browser({pathname:"/en/projects/pastemax/",languages:["pt-BR"]}).redirect,null,"Explicit localized deep links must stay indexable");
 const selected=browser({pathname:"/en/about/",languages:["en-US"]});
 assert.equal(typeof selected.click,"function");
 selected.click({target:{closest:()=>({dataset:{languageChoice:"pt"}})}});
 assert.equal(selected.storage.get("ailton:site-language:v1"),"pt");
 assert.match(selected.document.cookie,/site_lang=pt/);
 assert.ok(built("en").includes("og-en.svg"),"English OG image missing");
+assert.ok(built("sobre").includes("Engenharia de Software"),"Confirmed education is absent in PT biography");
+assert.ok(built("en/about").includes("Software Engineering"),"Confirmed education is absent in EN biography");
+assert.ok(built("sobre").includes("Globo"),"Globo professional timeline missing in PT");
+assert.ok(built("en/about").includes("Globo"),"Globo professional timeline missing in EN");
 console.log("Passed: 24 localized routes, 6 bilingual case studies, navigator detection, manual override, and deep-link routing.");
